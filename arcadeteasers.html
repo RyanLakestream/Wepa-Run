@@ -1,0 +1,1007 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>¡Wepa Run! - Coming Soon Games</title>
+<style>
+/* ═══════════════════════════════════════════════
+   ARCADE POSTER TEASER SYSTEM
+   Matches reference poster style exactly
+   ═══════════════════════════════════════════════ */
+
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+}
+
+:root {
+  /* Puerto Rico night plaza palette (from reference) */
+  --deep-night: #0a0515;
+  --purple-sky: #1a0a2e;
+  --purple-mid: #2a1a4e;
+  --neon-pink: #ff1493;
+  --neon-cyan: #00e5ff;
+  --hot-pink: #ff69b4;
+  --bright-yellow: #ffdd00;
+  --gold: #ffd700;
+  --white: #ffffff;
+  --red-accent: #ff0040;
+  
+  /* Poster structure */
+  --poster-max-width: 420px;
+  --border-thick: 4px;
+  --border-thin: 2px;
+  --glow-pink: 0 0 20px rgba(255, 20, 147, 0.6), 0 0 40px rgba(255, 20, 147, 0.3);
+  --glow-cyan: 0 0 20px rgba(0, 229, 255, 0.6), 0 0 40px rgba(0, 229, 255, 0.3);
+  --glow-gold: 0 0 15px rgba(255, 221, 0, 0.5);
+}
+
+body {
+  font-family: 'Press Start 2P', monospace;
+  background: var(--deep-night);
+  color: var(--white);
+  overflow-x: hidden;
+  line-height: 1.4;
+}
+
+/* ═══ ANIMATED BACKGROUND ═══ */
+#starfield {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  background: linear-gradient(180deg, var(--deep-night) 0%, var(--purple-sky) 50%, var(--purple-mid) 100%);
+}
+
+.star {
+  position: absolute;
+  width: 2px;
+  height: 2px;
+  background: var(--white);
+  border-radius: 50%;
+  animation: twinkle 3s infinite;
+}
+
+@keyframes twinkle {
+  0%, 100% { opacity: 0.3; }
+  50% { opacity: 1; }
+}
+
+/* ═══ CAROUSEL CONTAINER ═══ */
+#teaserCarousel {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  overflow: hidden;
+}
+
+.poster-wrapper {
+  width: 100%;
+  max-width: var(--poster-max-width);
+  position: relative;
+}
+
+/* ═══ ARCADE POSTER STRUCTURE ═══ */
+.arcade-poster {
+  background: var(--deep-night);
+  border: var(--border-thick) solid var(--neon-pink);
+  box-shadow: var(--glow-pink), inset 0 0 40px rgba(255, 20, 147, 0.1);
+  border-radius: 12px;
+  overflow: hidden;
+  position: relative;
+}
+
+@keyframes posterFadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95) translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+/* Corner decorations (like reference) */
+.arcade-poster::before,
+.arcade-poster::after {
+  content: '★';
+  position: absolute;
+  top: 12px;
+  font-size: 16px;
+  color: var(--neon-cyan);
+  text-shadow: var(--glow-cyan);
+  z-index: 10;
+  animation: spin 4s linear infinite;
+}
+
+.arcade-poster::before {
+  left: 12px;
+}
+
+.arcade-poster::after {
+  right: 12px;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* Crescent moon (top centre, avoids overlap with corner stars) */
+.moon {
+  position: absolute;
+  top: 15px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 40px;
+  height: 40px;
+  background: var(--gold);
+  border-radius: 50%;
+  box-shadow: 0 0 30px rgba(255, 215, 0, 0.5);
+  z-index: 10;
+  clip-path: ellipse(60% 100% at 70% 50%);
+}
+
+/* ═══ MARQUEE TITLE (giant block header) ═══ */
+.poster-header {
+  background: var(--purple-sky);
+  padding: 30px 20px 25px;
+  text-align: center;
+  position: relative;
+  border-bottom: var(--border-thick) solid var(--neon-pink);
+}
+
+.poster-title {
+  font-size: clamp(20px, 6vw, 28px);
+  line-height: 1.2;
+  letter-spacing: -1px;
+  text-transform: uppercase;
+  margin: 0;
+  position: relative;
+  z-index: 2;
+}
+
+.title-accent {
+  color: var(--bright-yellow);
+  text-shadow: var(--glow-gold);
+}
+
+.title-main {
+  color: var(--white);
+  display: block;
+  margin-top: 8px;
+}
+
+.title-subtext {
+  color: var(--hot-pink);
+  display: block;
+  margin-top: 8px;
+}
+
+/* ═══ SUBTITLE STRIP (bordered neon) ═══ */
+.poster-subtitle {
+  background: var(--neon-cyan);
+  color: var(--deep-night);
+  font-size: clamp(7px, 2.2vw, 9px);
+  padding: 8px 15px;
+  text-align: center;
+  letter-spacing: 0.5px;
+  font-weight: bold;
+  text-transform: uppercase;
+  border-top: var(--border-thin) solid var(--white);
+  border-bottom: var(--border-thin) solid var(--white);
+}
+
+/* ═══ HERO SCENE (central poster art) ═══ */
+.poster-hero {
+  height: 320px;
+  background: var(--purple-mid);
+  position: relative;
+  overflow: hidden;
+  border-bottom: var(--border-thick) solid var(--neon-pink);
+}
+
+/* Cityscape silhouette */
+.cityscape {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 40%;
+  background: linear-gradient(180deg, transparent 0%, var(--deep-night) 60%);
+  z-index: 1;
+}
+
+.building {
+  position: absolute;
+  bottom: 0;
+  background: var(--deep-night);
+}
+
+.building-1 { left: 5%; width: 80px; height: 80px; }
+.building-2 { left: 25%; width: 60px; height: 100px; }
+.building-3 { left: 45%; width: 50px; height: 70px; }
+.building-4 { right: 20%; width: 70px; height: 90px; }
+.building-5 { right: 5%; width: 85px; height: 75px; }
+
+/* Window lights */
+.window {
+  position: absolute;
+  width: 4px;
+  height: 6px;
+  background: var(--bright-yellow);
+  box-shadow: 0 0 8px rgba(255, 221, 0, 0.6);
+}
+
+/* String lights (festive plaza vibe) */
+.string-lights {
+  position: absolute;
+  top: 60px;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  z-index: 3;
+}
+
+.light-bulb {
+  position: absolute;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  animation: bulbGlow 2s infinite;
+}
+
+@keyframes bulbGlow {
+  0%, 100% { opacity: 0.6; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.2); }
+}
+
+/* Character placeholder (will be customized per game) */
+.hero-character {
+  position: absolute;
+  bottom: 15%;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 80px;
+  z-index: 2;
+  filter: drop-shadow(0 5px 10px rgba(0, 0, 0, 0.5));
+}
+
+/* ═══ FEATURE PANELS (4-grid beneath hero) ═══ */
+.poster-features {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  background: var(--deep-night);
+  border-bottom: var(--border-thick) solid var(--neon-pink);
+}
+
+.feature-item {
+  padding: 18px 12px;
+  text-align: center;
+  border: var(--border-thin) solid var(--neon-pink);
+  background: rgba(255, 20, 147, 0.05);
+  transition: all 0.3s;
+}
+
+.feature-item:hover {
+  background: rgba(255, 20, 147, 0.15);
+  transform: scale(1.05);
+}
+
+.feature-icon {
+  font-size: 28px;
+  margin-bottom: 8px;
+  display: block;
+  filter: drop-shadow(0 0 10px currentColor);
+}
+
+.feature-label {
+  font-size: clamp(7px, 2vw, 9px);
+  color: var(--bright-yellow);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  line-height: 1.4;
+}
+
+/* ═══ CTA BAR (large arcade button) ═══ */
+.poster-cta {
+  background: var(--neon-cyan);
+  padding: 22px 20px;
+  text-align: center;
+  position: relative;
+  border-bottom: var(--border-thick) solid var(--neon-pink);
+}
+
+.cta-arrow {
+  font-size: 16px;
+  color: var(--red-accent);
+  animation: arrowBounce 1.5s infinite;
+  display: inline-block;
+  margin: 0 8px;
+}
+
+@keyframes arrowBounce {
+  0%, 100% { transform: translateX(0); }
+  50% { transform: translateX(5px); }
+}
+
+.cta-main {
+  font-size: clamp(10px, 3vw, 13px);
+  color: var(--deep-night);
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin: 5px 0;
+}
+
+.cta-sub {
+  font-size: clamp(6px, 1.8vw, 7px);
+  color: rgba(10, 5, 21, 0.7);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* ═══ COMING SOON BANNER (gold marquee) ═══ */
+.poster-banner {
+  background: var(--gold);
+  color: var(--deep-night);
+  padding: 15px 20px;
+  text-align: center;
+  border: var(--border-thick) solid var(--bright-yellow);
+  box-shadow: inset 0 0 20px rgba(255, 221, 0, 0.3);
+  position: relative;
+}
+
+.banner-star {
+  font-size: 18px;
+  color: var(--red-accent);
+  display: inline-block;
+  margin: 0 12px;
+  animation: spin 3s linear infinite;
+}
+
+.banner-text {
+  font-size: clamp(12px, 3.5vw, 16px);
+  font-weight: bold;
+  letter-spacing: 2px;
+}
+
+/* ═══ FOOTER TAGLINE (tiny pixel copy) ═══ */
+.poster-footer {
+  padding: 12px 15px;
+  text-align: center;
+  background: var(--deep-night);
+}
+
+.footer-dots {
+  font-size: 8px;
+  margin: 0 4px;
+  opacity: 0.6;
+}
+
+.footer-text {
+  font-size: clamp(6px, 1.6vw, 7px);
+  color: var(--hot-pink);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  line-height: 1.6;
+}
+
+/* ═══ NAVIGATION ═══ */
+.nav-controls {
+  position: fixed;
+  top: 20px;
+  left: 20px;
+  z-index: 100;
+}
+
+.nav-btn {
+  background: var(--neon-pink);
+  color: var(--white);
+  border: var(--border-thin) solid var(--white);
+  padding: 10px 18px;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 10px;
+  text-transform: uppercase;
+  cursor: pointer;
+  box-shadow: var(--glow-pink);
+  border-radius: 6px;
+  transition: all 0.3s;
+}
+
+.nav-btn:hover {
+  background: var(--hot-pink);
+  transform: scale(1.05);
+}
+
+.carousel-arrows {
+  position: fixed;
+  bottom: 40px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 20px;
+  z-index: 100;
+}
+
+.arrow-btn {
+  width: 50px;
+  height: 50px;
+  background: var(--neon-cyan);
+  border: var(--border-thin) solid var(--white);
+  border-radius: 50%;
+  font-size: 20px;
+  color: var(--deep-night);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: var(--glow-cyan);
+  transition: all 0.3s;
+}
+
+.arrow-btn:hover {
+  transform: scale(1.1);
+}
+
+.arrow-btn:active {
+  transform: scale(0.95);
+}
+
+/* Dot indicators */
+.carousel-dots {
+  position: fixed;
+  bottom: 110px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 12px;
+  z-index: 100;
+}
+
+.dot {
+  width: 10px;
+  height: 10px;
+  background: rgba(255, 255, 255, 0.3);
+  border: 1px solid var(--white);
+  border-radius: 50%;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.dot.active {
+  background: var(--neon-pink);
+  box-shadow: var(--glow-pink);
+  transform: scale(1.3);
+}
+
+/* ═══ RESPONSIVE ═══ */
+@media (max-width: 480px) {
+  .poster-hero {
+    height: 280px;
+  }
+  
+  .nav-controls {
+    top: 10px;
+    left: 10px;
+  }
+  
+  .nav-btn {
+    padding: 8px 14px;
+    font-size: 8px;
+  }
+}
+
+@media (min-width: 768px) {
+  #teaserCarousel {
+    padding: 40px;
+  }
+}
+
+/* Hide inactive posters */
+.arcade-poster {
+  display: none;
+}
+
+.arcade-poster.active {
+  display: block;
+  animation: posterFadeIn 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+</style>
+</head>
+<body>
+
+<!-- Animated starfield background -->
+<div id="starfield"></div>
+
+<!-- Navigation -->
+<div class="nav-controls">
+  <button class="nav-btn" onclick="goBack()">◄ Back</button>
+</div>
+
+<!-- Carousel container -->
+<div id="teaserCarousel">
+  <div class="poster-wrapper">
+    <!-- Posters will be injected here -->
+  </div>
+</div>
+
+<!-- Carousel controls -->
+<div class="carousel-arrows">
+  <button class="arrow-btn" onclick="prevPoster()">◄</button>
+  <button class="arrow-btn" onclick="nextPoster()">►</button>
+</div>
+
+<div class="carousel-dots" id="carouselDots"></div>
+
+<script>
+// ═══════════════════════════════════════════════
+//  COMPLETE WEPA RUN ARCADE LINEUP
+//  Guagua Rush = PLAYABLE NOW
+//  All others = COMING SOON
+// ═══════════════════════════════════════════════
+
+const games = [
+  {
+    id: 'guagua',
+    title: {
+      accent: '',
+      main: 'GUAGUA',
+      sub: 'RUSH'
+    },
+    subtitle: 'HTML5 ENDLESS BUS RUNNER',
+    heroChar: '🚌',
+    heroColor: '#e03020',
+    playable: true,
+    features: [
+      { icon: '🚦', label: 'DODGE<br>TRAFFIC' },
+      { icon: '🏃', label: 'ENDLESS<br>RUNNING' },
+      { icon: '⭐', label: 'POWER<br>UPS' },
+      { icon: '🏆', label: 'HIGH<br>SCORES' }
+    ],
+    footer: 'DODGE CARS. CATCH GUAGUAS. PUERTO RICAN PRIDE.<br>ARE YOU READY TO RUN?'
+  },
+  {
+    id: 'piragua-taxi',
+    title: {
+      accent: "PEDRO'S",
+      main: 'PIRAGUA',
+      sub: 'TAXI'
+    },
+    subtitle: 'HTML5 RETRO RACING ADVENTURE',
+    heroChar: '🍧',
+    heroColor: '#ffdd00',
+    playable: false,
+    features: [
+      { icon: '🏎️', label: 'RACE<br>THE PLAZA' },
+      { icon: '🍧', label: 'DELIVER<br>PIRAGUAS' },
+      { icon: '⏱️', label: 'BEAT THE<br>CLOCK' },
+      { icon: '🏁', label: 'BE THE<br>CHAMP!' }
+    ],
+    footer: 'FAST CARTS. COOL PIRAGUAS. PUERTO RICAN PRIDE.<br>ARE YOU READY TO RACE?'
+  },
+  {
+    id: 'piragua-snake',
+    title: {
+      accent: 'PIRAGUA',
+      main: 'SNAKE',
+      sub: ''
+    },
+    subtitle: 'HTML5 RETRO PUZZLE ADVENTURE',
+    heroChar: '🐍',
+    heroColor: '#20c030',
+    playable: false,
+    features: [
+      { icon: '👥', label: 'GROW YOUR<br>LINE' },
+      { icon: '🍧', label: 'COLLECT<br>CUSTOMERS' },
+      { icon: '🎯', label: 'AVOID<br>YOURSELF' },
+      { icon: '📈', label: 'GET<br>BIGGER!' }
+    ],
+    footer: 'GROW THE LINE. SERVE THE PEOPLE. PUERTO RICAN PRIDE.<br>ARE YOU READY TO SNAKE?'
+  },
+  {
+    id: 'flan',
+    title: {
+      accent: "ABUELA'S",
+      main: 'FLAN',
+      sub: 'DEFENSE'
+    },
+    subtitle: 'HTML5 RETRO DEFENSE SHOOTER',
+    heroChar: '🍮',
+    heroColor: '#ffd700',
+    playable: false,
+    features: [
+      { icon: '🍽️', label: 'SERVE<br>THE RUSH' },
+      { icon: '🪰', label: 'STOP<br>THE FLIES' },
+      { icon: '🥄', label: 'WOODEN<br>SPOON' },
+      { icon: '🏪', label: 'SAVE THE<br>SHOP!' }
+    ],
+    footer: 'FLAN POWER. ABUELA HOUR. PUERTO RICAN PRIDE.<br>ARE YOU READY TO DEFEND?'
+  },
+  {
+    id: 'dominoes',
+    title: {
+      accent: 'DOMINOES',
+      main: 'BORICUA',
+      sub: ''
+    },
+    subtitle: 'HTML5 RETRO STRATEGY GAME',
+    heroChar: '🎲',
+    heroColor: '#20a840',
+    playable: false,
+    features: [
+      { icon: '🎯', label: 'MATCH<br>THE TILES' },
+      { icon: '🧠', label: 'SMART<br>PLAYS' },
+      { icon: '👴', label: 'BEAT<br>THE TÍOS' },
+      { icon: '🏆', label: 'DOMINO<br>KING!' }
+    ],
+    footer: 'CLASSIC TILES. FAMILY VIBES. PUERTO RICAN PRIDE.<br>ARE YOU READY TO PLAY?'
+  },
+  {
+    id: 'boxing',
+    title: {
+      accent: 'BOXING',
+      main: 'LEGENDS',
+      sub: ''
+    },
+    subtitle: 'HTML5 RETRO FIGHTING GAME',
+    heroChar: '🥊',
+    heroColor: '#e03020',
+    playable: false,
+    features: [
+      { icon: '👊', label: 'THROW<br>PUNCHES' },
+      { icon: '🛡️', label: 'DODGE<br>HITS' },
+      { icon: '💥', label: 'KNOCKOUT<br>POWER' },
+      { icon: '🏆', label: 'BE THE<br>CHAMP!' }
+    ],
+    footer: 'FAST PUNCHES. LEGENDARY FIGHTS. PUERTO RICAN PRIDE.<br>ARE YOU READY TO FIGHT?'
+  },
+  {
+    id: 'familia',
+    title: {
+      accent: 'LA FAMILIA',
+      main: 'DINNER',
+      sub: ''
+    },
+    subtitle: 'HTML5 RETRO COOKING CHAOS',
+    heroChar: '🍽️',
+    heroColor: '#ff6b6b',
+    playable: false,
+    features: [
+      { icon: '🥘', label: 'COOK<br>THE MEAL' },
+      { icon: '👵', label: 'PLEASE<br>ABUELA' },
+      { icon: '🧂', label: '¡MÁS<br>SAL!' },
+      { icon: '🎉', label: 'SURVIVE<br>CHAOS!' }
+    ],
+    footer: 'FAMILY CHAOS. KITCHEN MADNESS. PUERTO RICAN PRIDE.<br>ARE YOU READY TO COOK?'
+  },
+  {
+    id: 'coqui',
+    title: {
+      accent: 'COQUÍ',
+      main: 'HOP',
+      sub: ''
+    },
+    subtitle: 'HTML5 RETRO JUMPING GAME',
+    heroChar: '🐸',
+    heroColor: '#20c030',
+    playable: false,
+    features: [
+      { icon: '🦘', label: 'JUMP<br>ACROSS' },
+      { icon: '🚗', label: 'DODGE<br>CARS' },
+      { icon: '🏝️', label: 'REACH<br>HOME' },
+      { icon: '🎵', label: 'HEAR THE<br>SONG!' }
+    ],
+    footer: 'TINY FROG. BIG JUMPS. PUERTO RICAN PRIDE.<br>ARE YOU READY TO HOP?'
+  },
+  {
+    id: 'placita',
+    title: {
+      accent: 'LA PLACITA',
+      main: 'PARTY',
+      sub: ''
+    },
+    subtitle: 'HTML5 RETRO DANCE RHYTHM',
+    heroChar: '💃',
+    heroColor: '#ff1493',
+    playable: false,
+    features: [
+      { icon: '🎶', label: 'MATCH<br>THE BEAT' },
+      { icon: '🍹', label: 'SERVE<br>DRINKS' },
+      { icon: '✨', label: 'KEEP THE<br>VIBE' },
+      { icon: '🎉', label: 'PARTY<br>ALL NIGHT!' }
+    ],
+    footer: 'SALSA RHYTHMS. PLAZA VIBES. PUERTO RICAN PRIDE.<br>ARE YOU READY TO DANCE?'
+  }
+];
+
+let currentIndex = 0;
+
+// ═══════════════════════════════════════════════
+//  POSTER RENDERING
+// ═══════════════════════════════════════════════
+
+function renderPosters() {
+  const wrapper = document.querySelector('.poster-wrapper');
+  
+  games.forEach((game, index) => {
+    const poster = document.createElement('div');
+    poster.className = `arcade-poster ${index === 0 ? 'active' : ''}`;
+    poster.innerHTML = `
+      <div class="moon"></div>
+      
+      <div class="poster-header">
+        <h1 class="poster-title">
+          ${game.title.accent ? `<span class="title-accent">${game.title.accent}</span>` : ''}
+          <span class="title-main">${game.title.main}</span>
+          ${game.title.sub ? `<span class="title-subtext">${game.title.sub}</span>` : ''}
+        </h1>
+      </div>
+      
+      <div class="poster-subtitle">${game.subtitle}</div>
+      
+      <div class="poster-hero">
+        <div class="string-lights">
+          ${generateLights()}
+        </div>
+        <div class="hero-character" style="color: ${game.heroColor}">${game.heroChar}</div>
+        <div class="cityscape">
+          ${generateCityscape()}
+        </div>
+      </div>
+      
+      <div class="poster-features">
+        ${game.features.map(f => `
+          <div class="feature-item">
+            <span class="feature-icon">${f.icon}</span>
+            <div class="feature-label">${f.label}</div>
+          </div>
+        `).join('')}
+      </div>
+      
+      <div class="poster-cta">
+        ${game.playable ? `
+          <div class="cta-arrow">»</div>
+          <div class="cta-main" style="color: var(--deep-night); cursor: pointer;" onclick="launchGame('${game.id}')">▶ PLAY NOW</div>
+          <div class="cta-arrow">«</div>
+          <div class="cta-sub">NO DOWNLOADS. JUST PURE RETRO FUN.</div>
+        ` : `
+          <div class="cta-main" style="color: var(--deep-night);">COMING SOON</div>
+          <div class="cta-sub">THIS GAME IS STILL IN DEVELOPMENT</div>
+        `}
+      </div>
+      
+      ${game.playable ? `
+        <div class="poster-banner" style="background: var(--neon-cyan); border-color: var(--neon-cyan);">
+          <span class="banner-star">▶</span>
+          <span class="banner-text">AVAILABLE NOW</span>
+          <span class="banner-star">▶</span>
+        </div>
+      ` : `
+        <div class="poster-banner">
+          <span class="banner-star">★</span>
+          <span class="banner-text">COMING SOON</span>
+          <span class="banner-star">★</span>
+        </div>
+      `}
+      
+      <div class="poster-footer">
+        <div class="footer-text">
+          <span class="footer-dots">●</span>
+          <span class="footer-dots">●</span>
+          <span class="footer-dots">●</span>
+          <span class="footer-dots">●</span>
+          <span class="footer-dots">●</span>
+          ${game.footer}
+          <span class="footer-dots">●</span>
+          <span class="footer-dots">●</span>
+          <span class="footer-dots">●</span>
+          <span class="footer-dots">●</span>
+          <span class="footer-dots">●</span>
+        </div>
+      </div>
+    `;
+    
+    wrapper.appendChild(poster);
+  });
+  
+  renderDots();
+}
+
+function generateLights() {
+  const colors = ['#ff0040', '#ffdd00', '#00e5ff', '#ff1493', '#00ff00'];
+  let html = '';
+  for (let i = 0; i < 8; i++) {
+    const left = 10 + i * 12;
+    const color = colors[i % colors.length];
+    const delay = i * 0.3;
+    html += `<div class="light-bulb" style="left: ${left}%; background: ${color}; animation-delay: ${delay}s;"></div>`;
+  }
+  return html;
+}
+
+function generateCityscape() {
+  let html = '';
+  const buildings = [
+    { left: '5%', width: '80px', height: '80px' },
+    { left: '25%', width: '60px', height: '100px' },
+    { left: '45%', width: '50px', height: '70px' },
+    { right: '20%', width: '70px', height: '90px' },
+    { right: '5%', width: '85px', height: '75px' }
+  ];
+  
+  buildings.forEach((b, i) => {
+    const style = b.left ? `left: ${b.left}` : `right: ${b.right}`;
+    html += `<div class="building building-${i+1}" style="${style}; width: ${b.width}; height: ${b.height};">`;
+    
+    // Add windows
+    const rows = Math.floor(parseInt(b.height) / 20);
+    const cols = Math.floor(parseInt(b.width) / 20);
+    for (let r = 0; r < rows; r++) {
+      for (let c = 0; c < cols; c++) {
+        if (Math.random() > 0.4) {
+          html += `<div class="window" style="top: ${r*15+5}px; left: ${c*18+6}px;"></div>`;
+        }
+      }
+    }
+    
+    html += `</div>`;
+  });
+  
+  return html;
+}
+
+function renderDots() {
+  const dotsContainer = document.getElementById('carouselDots');
+  dotsContainer.innerHTML = games.map((_, i) => 
+    `<div class="dot ${i === 0 ? 'active' : ''}" onclick="goToSlide(${i})"></div>`
+  ).join('');
+}
+
+// ═══════════════════════════════════════════════
+//  NAVIGATION
+// ═══════════════════════════════════════════════
+
+function showPoster(index) {
+  const posters = document.querySelectorAll('.arcade-poster');
+  const dots = document.querySelectorAll('.dot');
+
+  posters.forEach((p, i) => {
+    if (i === index) {
+      p.classList.remove('active');
+      void p.offsetWidth; // force reflow so animation restarts
+      p.classList.add('active');
+    } else {
+      p.classList.remove('active');
+    }
+  });
+
+  dots.forEach((d, i) => {
+    d.classList.toggle('active', i === index);
+  });
+
+  currentIndex = index;
+}
+
+function nextPoster() {
+  const next = (currentIndex + 1) % games.length;
+  showPoster(next);
+}
+
+function prevPoster() {
+  const prev = (currentIndex - 1 + games.length) % games.length;
+  showPoster(prev);
+}
+
+function goToSlide(index) {
+  showPoster(index);
+}
+
+function goBack() {
+  // Replace this with your actual back navigation
+  // Option A: Go to main menu page
+  // window.location.href = 'index.html';
+  
+  // Option B: Hide teaser, show main game screen
+  // document.getElementById('teaserScreen').style.display = 'none';
+  // document.getElementById('gameScreen').style.display = 'block';
+  
+  // TODO: wire up to your actual menu navigation
+  console.warn('goBack() not yet wired up — set window.location.href or hide/show the relevant screens here.');;
+}
+
+function launchGame(gameId) {
+  if (gameId === 'guagua') {
+    // OPTION A: If arcade and game are separate HTML files
+    // window.location.href = 'wepa-run-game.html';
+    
+    // OPTION B: If integrated into single HTML (recommended)
+    // Hide arcade carousel, show game
+    // document.getElementById('teaserCarousel').style.display = 'none';
+    // document.getElementById('gameContainer').style.display = 'block';
+    // phase = 'intro'; // or whatever starts your game
+    // loop();
+    
+    // TODO: replace with actual game launch, e.g.:
+    // window.location.href = 'wepa-run-game.html';
+    console.warn('launchGame("guagua") not yet wired up — redirect or show game screen here.');
+    
+    // If you have the game in the same HTML, uncomment this:
+    // phase = 'intro';
+    // startGame();
+  }
+}
+
+// ═══════════════════════════════════════════════
+//  TOUCH/SWIPE SUPPORT
+// ═══════════════════════════════════════════════
+
+let touchStartX = 0;
+let touchEndX = 0;
+
+document.addEventListener('touchstart', e => {
+  touchStartX = e.changedTouches[0].screenX;
+});
+
+document.addEventListener('touchend', e => {
+  touchEndX = e.changedTouches[0].screenX;
+  handleSwipe();
+});
+
+function handleSwipe() {
+  const diff = touchStartX - touchEndX;
+  if (Math.abs(diff) > 50) {
+    if (diff > 0) {
+      nextPoster();
+    } else {
+      prevPoster();
+    }
+  }
+}
+
+// Keyboard navigation
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowLeft') prevPoster();
+  if (e.key === 'ArrowRight') nextPoster();
+  if (e.key === 'Escape') goBack();
+});
+
+// ═══════════════════════════════════════════════
+//  STARFIELD ANIMATION
+// ═══════════════════════════════════════════════
+
+function createStarfield() {
+  const starfield = document.getElementById('starfield');
+  for (let i = 0; i < 80; i++) {
+    const star = document.createElement('div');
+    star.className = 'star';
+    star.style.left = Math.random() * 100 + '%';
+    star.style.top = Math.random() * 100 + '%';
+    star.style.animationDelay = Math.random() * 3 + 's';
+    starfield.appendChild(star);
+  }
+}
+
+// ═══════════════════════════════════════════════
+//  INITIALIZE
+// ═══════════════════════════════════════════════
+
+createStarfield();
+renderPosters();
+</script>
+
+</body>
+</html>

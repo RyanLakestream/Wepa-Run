@@ -6411,7 +6411,8 @@ const games = [
     subtitle: 'HTML5 RETRO PUZZLE ADVENTURE',
     heroChar: '🐍',
     heroColor: '#20c030',
-    playable: false,
+    playable: true,
+    url: 'piragua-snake.html',
     features: [
       { icon: '👥', label: 'GROW YOUR<br>LINE' },
       { icon: '🍧', label: 'COLLECT<br>CUSTOMERS' },
@@ -6430,7 +6431,8 @@ const games = [
     subtitle: 'HTML5 RETRO DEFENSE SHOOTER',
     heroChar: '🍮',
     heroColor: '#ffd700',
-    playable: false,
+    playable: true,
+    url: 'flan-defense.html',
     features: [
       { icon: '🍽️', label: 'SERVE<br>THE RUSH' },
       { icon: '🪰', label: 'STOP<br>THE FLIES' },
@@ -6506,7 +6508,8 @@ const games = [
     subtitle: 'HTML5 RETRO JUMPING GAME',
     heroChar: '🐸',
     heroColor: '#20c030',
-    playable: false,
+    playable: true,
+    url: 'coqui-hop.html',
     features: [
       { icon: '🦘', label: 'JUMP<br>ACROSS' },
       { icon: '🚗', label: 'DODGE<br>CARS' },
@@ -6793,6 +6796,11 @@ function showGame() {
 }
 
 function launchGame(gameId) {
+  const game = games.find(g => g.id === gameId);
+  if (game && game.url) {
+    window.location.href = game.url;
+    return;
+  }
   if (gameId === 'guagua') showGame();
 }
 

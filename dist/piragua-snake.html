@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#0a0515">
+<title>PIRAGUA SNAKE — ¡Wepa Run!</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+<style>
+:root{
+  --deep:#0a0515;--sky:#1a0a2e;--mid:#2a1a4e;--pink:#ff1493;--cyan:#00e5ff;--yellow:#ffdd00;--gold:#ffd700;--red:#ff0040;--white:#fff;--green:#27f277;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;touch-action:none;user-select:none;-webkit-user-select:none;}
+html,body{width:100%;height:100%;overflow:hidden;background:#000;font-family:'Press Start 2P',monospace;color:var(--white);}
+body{position:fixed;inset:0;display:flex;justify-content:center;align-items:center;padding:env(safe-area-inset-top) 0 env(safe-area-inset-bottom);background:linear-gradient(180deg,#020108 0%,var(--sky) 46%,var(--mid) 100%);}
+#stars{position:fixed;inset:0;z-index:0;overflow:hidden;background:radial-gradient(circle at 82% 14%,rgba(255,221,0,.08),transparent 10%),linear-gradient(180deg,#020108 0%,var(--sky) 48%,var(--mid) 100%);}
+.star{position:absolute;background:#fff;border-radius:50%;opacity:.7;animation:tw 2.6s step-end infinite;}
+@keyframes tw{0%,100%{opacity:.25}50%{opacity:1}}
+#shell{position:relative;z-index:2;width:min(100vw,430px);height:100dvh;max-height:920px;display:flex;align-items:center;justify-content:center;overflow:hidden;}
+#gameFrame{position:relative;width:100%;max-width:375px;aspect-ratio:375/812;background:#09030f;border:4px solid var(--pink);box-shadow:0 0 18px rgba(255,20,147,.8),0 0 48px rgba(255,20,147,.3),inset 0 0 28px rgba(255,20,147,.12);overflow:hidden;}
+canvas{position:absolute;inset:0;width:100%;height:100%;image-rendering:pixelated;image-rendering:crisp-edges;}
+#hud{position:absolute;left:10px;right:10px;top:48px;z-index:5;display:grid;grid-template-columns:1fr auto auto;gap:7px;align-items:center;padding:9px 8px;background:rgba(10,5,21,.85);border:2px solid var(--cyan);box-shadow:0 0 15px rgba(0,229,255,.35);font-size:7px;line-height:1.6;text-shadow:2px 2px #000;}
+#hud .title{color:var(--yellow);font-size:8px;white-space:nowrap;}
+#hud .stat{color:var(--white);white-space:nowrap;}
+#hud .cyan{color:var(--cyan)}
+#arcadeBtn{position:absolute;left:10px;top:10px;z-index:10;font-family:'Press Start 2P',monospace;font-size:8px;color:#fff;background:#160616;border:2px solid var(--pink);padding:10px 9px;box-shadow:0 0 14px rgba(255,20,147,.7);cursor:pointer;}
+#arcadeBtn:active{transform:translate(2px,2px);background:var(--pink);}
+#hint{position:absolute;left:12px;right:12px;bottom:12px;z-index:6;text-align:center;font-size:6px;color:#8d7aa8;letter-spacing:.5px;text-shadow:1px 1px #000;line-height:1.6;}
+#overlay{position:absolute;inset:0;display:none;z-index:20;align-items:center;justify-content:center;background:rgba(0,0,0,.82);padding:26px;}
+#overlay.show{display:flex;}
+.panel{width:100%;max-width:320px;text-align:center;background:#0a0515;border:4px solid var(--pink);box-shadow:0 0 24px rgba(255,20,147,.85),inset 0 0 30px rgba(255,20,147,.15);padding:24px 16px;}
+.panel h1{font-size:22px;line-height:1.35;color:var(--gold);text-shadow:3px 3px #5f2700,0 0 18px rgba(255,215,0,.4);margin-bottom:15px;}
+.panel p{font-size:8px;line-height:2;color:#fff;margin:8px 0;}
+.panel .cyan{color:var(--cyan)}
+.panel .pink{color:var(--pink)}
+.pxbtn{margin-top:14px;display:block;width:100%;font-family:'Press Start 2P',monospace;font-size:9px;color:#0a0515;background:var(--yellow);border:0;padding:15px 10px;box-shadow:4px 4px 0 #8b7200,-1px -1px 0 #fff8;cursor:pointer;}
+.pxbtn:active{transform:translate(2px,2px);box-shadow:2px 2px 0 #8b7200;}
+.pxbtn.ghost{background:transparent;color:var(--cyan);border:2px solid var(--cyan);box-shadow:0 0 12px rgba(0,229,255,.5);font-size:7px;padding:11px 8px;}
+#lights{position:absolute;left:-4px;right:-4px;top:118px;height:18px;z-index:4;pointer-events:none;border-top:2px solid rgba(255,255,255,.14);}
+.bulb{position:absolute;top:-5px;width:8px;height:8px;border-radius:50%;box-shadow:0 0 10px currentColor;animation:bulb 1.8s step-end infinite;}
+@keyframes bulb{50%{opacity:.42;transform:scale(.85)}}
+#moon{position:absolute;right:34px;top:102px;width:44px;height:44px;border-radius:50%;background:#ffe88a;box-shadow:0 0 28px rgba(255,238,138,.35);z-index:1;}
+#moon::after{content:'';position:absolute;right:-10px;top:0;width:44px;height:44px;border-radius:50%;background:#161425;}
+.css-city{position:absolute;left:0;right:0;bottom:0;height:116px;z-index:1;pointer-events:none;background:linear-gradient(0deg,#0a0515 0%,rgba(10,5,21,.8) 55%,transparent 100%);opacity:.75;}
+.css-city i{position:absolute;bottom:0;background:#0b0613;border-top:2px solid rgba(255,20,147,.22);}
+.css-city i::before{content:'';position:absolute;inset:8px 9px;background:repeating-linear-gradient(90deg,transparent 0 14px,rgba(255,221,0,.35) 14px 18px,transparent 18px 32px),repeating-linear-gradient(0deg,transparent 0 18px,rgba(0,229,255,.18) 18px 22px,transparent 22px 36px);opacity:.8;}
+.scan{position:absolute;inset:0;z-index:30;pointer-events:none;background:repeating-linear-gradient(0deg,rgba(255,255,255,.025) 0 1px,transparent 1px 4px);mix-blend-mode:screen;opacity:.5;}
+@media (max-height:760px){#gameFrame{max-width:350px}.panel h1{font-size:18px}#hud{top:44px;font-size:6px}.panel{padding:18px 14px}.css-city{height:92px}}
+</style>
+</head>
+<body>
+
+<div id="stars"></div>
+<div id="shell">
+  <div id="gameFrame">
+    <button id="arcadeBtn">◄ ARCADE</button>
+    <div id="hud"><div id="hudTitle" class="title"></div><div id="hudScore" class="stat"></div><div id="hudExtra" class="stat cyan"></div></div>
+    <div id="moon"></div>
+    <div id="lights"></div>
+    <div class="css-city"><i style="left:2%;width:64px;height:74px"></i><i style="left:22%;width:48px;height:92px"></i><i style="left:43%;width:72px;height:56px"></i><i style="right:20%;width:56px;height:84px"></i><i style="right:3%;width:76px;height:64px"></i></div>
+    <canvas id="game" width="375" height="812"></canvas>
+    <div id="hint"></div>
+    <div id="overlay"><div class="panel"><h1 id="overTitle">GAME OVER</h1><p id="overStats"></p><p class="cyan" id="overHint">TAP TO RETRY</p><button class="pxbtn" id="retryBtn">▶ RETRY</button><button class="pxbtn ghost" id="homeBtn">◄ ARCADE</button></div></div>
+    <div class="scan"></div>
+  </div>
+</div>
+
+<script>
+
+const W=375,H=812;
+const cvs=document.getElementById('game');
+const ctx=cvs.getContext('2d');
+const hudTitle=document.getElementById('hudTitle');
+const hudScore=document.getElementById('hudScore');
+const hudExtra=document.getElementById('hudExtra');
+const hint=document.getElementById('hint');
+const overlay=document.getElementById('overlay');
+const overTitle=document.getElementById('overTitle');
+const overStats=document.getElementById('overStats');
+const retryBtn=document.getElementById('retryBtn');
+const homeBtn=document.getElementById('homeBtn');
+const arcadeBtn=document.getElementById('arcadeBtn');
+const ARCADE_URL='index.html';
+let DPR=Math.max(1,Math.min(3,window.devicePixelRatio||1));
+function fitCanvas(){cvs.width=W*DPR;cvs.height=H*DPR;ctx.setTransform(DPR,0,0,DPR,0,0);}
+fitCanvas();addEventListener('resize',fitCanvas);
+function arcade(){try{location.href=ARCADE_URL;}catch(e){history.back();}}
+arcadeBtn.onclick=arcade;homeBtn.onclick=arcade;
+function makeStars(){const s=document.getElementById('stars');for(let i=0;i<95;i++){let d=document.createElement('b');d.className='star';let z=Math.random()<.85?2:3;d.style.width=z+'px';d.style.height=z+'px';d.style.left=(Math.random()*100)+'%';d.style.top=(Math.random()*100)+'%';d.style.animationDelay=(Math.random()*3)+'s';s.appendChild(d);}}
+function makeLights(){const l=document.getElementById('lights');const colors=['#ff0040','#ffdd00','#00e5ff','#ff1493','#20f060','#7c4dff'];for(let i=0;i<18;i++){let b=document.createElement('i');b.className='bulb';b.style.left=(i*6)+'%';b.style.color=colors[i%colors.length];b.style.background=colors[i%colors.length];b.style.animationDelay=(i*.11)+'s';l.appendChild(b);}}
+makeStars();makeLights();
+function clear(){ctx.clearRect(0,0,W,H);}
+function pxRect(x,y,w,h,c){ctx.fillStyle=c;ctx.fillRect(Math.round(x),Math.round(y),Math.round(w),Math.round(h));}
+function text(t,x,y,size,c,align='center'){ctx.save();ctx.font=size+"px 'Press Start 2P', monospace";ctx.textAlign=align;ctx.textBaseline='middle';ctx.fillStyle=c;ctx.shadowColor='#000';ctx.shadowBlur=0;ctx.shadowOffsetX=2;ctx.shadowOffsetY=2;ctx.fillText(t,x,y);ctx.restore();}
+function drawBackdrop(){
+  const g=ctx.createLinearGradient(0,0,0,H);g.addColorStop(0,'#05010d');g.addColorStop(.44,'#1a0a2e');g.addColorStop(1,'#2a1a4e');ctx.fillStyle=g;ctx.fillRect(0,0,W,H);
+  ctx.globalAlpha=.35;for(let i=0;i<40;i++){let x=(i*73+frame*0.08)%W;let y=90+(i*47)%440;pxRect(x,y,2,2,'#ffffff');}ctx.globalAlpha=1;
+  // String-light cable and bulbs
+  ctx.strokeStyle='rgba(255,255,255,.17)';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(0,132);ctx.quadraticCurveTo(W/2,166,W,126);ctx.stroke();
+  const cols=['#ff0040','#ffdd00','#00e5ff','#ff1493','#20f060','#7c4dff'];
+  for(let i=0;i<15;i++){const x=18+i*25;const y=132+Math.sin((i/14)*Math.PI)*26;ctx.fillStyle=cols[i%cols.length];ctx.shadowColor=cols[i%cols.length];ctx.shadowBlur=8;ctx.fillRect(x,y,6,6);ctx.shadowBlur=0;}
+}
+function drawCity(){
+  ctx.fillStyle='rgba(6,2,14,.86)';ctx.fillRect(0,H-110,W,110);
+  const bs=[[-6,70,82],[76,52,104],[146,78,70],[210,60,92],[278,84,76],[342,58,84]];
+  for(const [x,w,h] of bs){ctx.fillStyle='#07030c';ctx.fillRect(x,H-h,w,h);ctx.fillStyle='rgba(255,221,0,.5)';for(let xx=x+10;xx<x+w-8;xx+=21){for(let yy=H-h+14;yy<H-12;yy+=24){if(((xx+yy+frame)|0)%3)ctx.fillRect(xx,yy,5,7);}}}
+  ctx.fillStyle='#ffdd00';for(let x=0;x<W;x+=70)ctx.fillRect(x,H-62,38,6);
+}
+function roundRect(x,y,w,h,r,stroke,fill){ctx.beginPath();ctx.moveTo(x+r,y);ctx.arcTo(x+w,y,x+w,y+h,r);ctx.arcTo(x+w,y+h,x,y+h,r);ctx.arcTo(x,y+h,x,y,r);ctx.arcTo(x,y,x+w,y,r);if(fill){ctx.fillStyle=fill;ctx.fill();}if(stroke){ctx.strokeStyle=stroke;ctx.lineWidth=3;ctx.stroke();}}
+function rects(a,b){return a.x<b.x+b.w&&a.x+a.w>b.x&&a.y<b.y+b.h&&a.y+a.h>b.y;}
+let frame=0,last=0,playing=true;
+function showOverlay(title,stats){playing=false;overTitle.textContent=title;overStats.innerHTML=stats;overlay.classList.add('show');}
+function hideOverlay(){overlay.classList.remove('show');}
+
+
+hudTitle.textContent='PIRAGUA SNAKE';hint.innerHTML='ARROWS / SWIPE / TAP ZONES • DON’T CRASH THE LINE';
+const tile=20,cols=17,rows=25,ox=17,oy=150;
+let score,dir,nextDir,snake,food,speed,lastStep,ateCount,crashReason;
+function spawnFood(){let ok=false;while(!ok){food={x:Math.floor(Math.random()*cols),y:Math.floor(Math.random()*rows)};ok=!snake.some(s=>s.x===food.x&&s.y===food.y);}}
+function init(){score=0;ateCount=0;speed=190;lastStep=0;dir={x:1,y:0};nextDir={x:1,y:0};snake=[{x:7,y:13},{x:6,y:13},{x:5,y:13}];spawnFood();playing=true;hideOverlay();}
+function setDir(x,y){if(!playing)return;if(snake.length>1 && snake[0].x+x===snake[1].x && snake[0].y+y===snake[1].y)return;nextDir={x,y};}
+function step(){dir=nextDir;const head={x:snake[0].x+dir.x,y:snake[0].y+dir.y};if(head.x<0||head.y<0||head.x>=cols||head.y>=rows){crashReason='CRASHED!';return gameOver();}if(snake.some(s=>s.x===head.x&&s.y===head.y)){crashReason='LINE TOO LONG!';return gameOver();}snake.unshift(head);if(head.x===food.x&&head.y===food.y){score+=10;ateCount++;if(ateCount%10===0)speed=Math.max(75,speed-22);spawnFood();}else snake.pop();}
+function gameOver(){showOverlay(crashReason,`FINAL SCORE: <span class="cyan">${score}</span><br>LENGTH: ${snake.length} CUSTOMERS`);}
+function drawGrid(){roundRect(ox-5,oy-5,cols*tile+10,rows*tile+10,4,'#ff1493','rgba(10,5,21,.7)');ctx.strokeStyle='rgba(0,229,255,.08)';ctx.lineWidth=1;for(let x=0;x<=cols;x++){ctx.beginPath();ctx.moveTo(ox+x*tile,oy);ctx.lineTo(ox+x*tile,oy+rows*tile);ctx.stroke();}for(let y=0;y<=rows;y++){ctx.beginPath();ctx.moveTo(ox,oy+y*tile);ctx.lineTo(ox+cols*tile,oy+y*tile);ctx.stroke();}}
+function cell(x,y,c){pxRect(ox+x*tile+2,oy+y*tile+2,tile-4,tile-4,c);ctx.strokeStyle='#000';ctx.lineWidth=2;ctx.strokeRect(ox+x*tile+2,oy+y*tile+2,tile-4,tile-4);}
+function drawSnake(){for(let i=snake.length-1;i>=0;i--){const s=snake[i];if(i===0){cell(s.x,s.y,'#ffd700');ctx.font='18px serif';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText('🧑',ox+s.x*tile+tile/2,oy+s.y*tile+tile/2+1);}else{cell(s.x,s.y,i%2?'#00e5ff':'#ff1493');ctx.font='15px serif';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText('👤',ox+s.x*tile+tile/2,oy+s.y*tile+tile/2+1);}}}
+function drawFood(){ctx.font='20px serif';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText('🍧',ox+food.x*tile+tile/2,oy+food.y*tile+tile/2+1);ctx.strokeStyle='#ffdd00';ctx.lineWidth=2;ctx.strokeRect(ox+food.x*tile+2,oy+food.y*tile+2,tile-4,tile-4);}
+function drawHeader(){text('PEDRO SERVE LA FILA',W/2,124,8,'#ffdd00');}
+function render(t){if(!last)last=t;const dt=t-last;last=t;frame++;clear();drawBackdrop();drawHeader();drawGrid();drawFood();drawSnake();drawCity();if(playing&&t-lastStep>speed){step();lastStep=t;}hudScore.textContent='SCORE '+String(score).padStart(4,'0');hudExtra.textContent='LEN '+String(snake.length).padStart(2,'0');requestAnimationFrame(render);}
+let sx=0,sy=0;
+addEventListener('keydown',e=>{if(e.key==='ArrowUp')setDir(0,-1);if(e.key==='ArrowDown')setDir(0,1);if(e.key==='ArrowLeft')setDir(-1,0);if(e.key==='ArrowRight')setDir(1,0);if((e.key==='Enter'||e.key===' ')&&!playing)init();});
+cvs.addEventListener('pointerdown',e=>{const r=cvs.getBoundingClientRect();sx=(e.clientX-r.left)/r.width*W;sy=(e.clientY-r.top)/r.height*H;if(!playing){init();}});
+cvs.addEventListener('pointerup',e=>{if(!playing)return;const r=cvs.getBoundingClientRect(),x=(e.clientX-r.left)/r.width*W,y=(e.clientY-r.top)/r.height*H;const dx=x-sx,dy=y-sy;if(Math.abs(dx)>20||Math.abs(dy)>20){if(Math.abs(dx)>Math.abs(dy))setDir(dx<0?-1:1,0);else setDir(0,dy<0?-1:1);}else{const cx=W/2,cy=H/2;if(Math.abs(x-cx)>Math.abs(y-cy))setDir(x<cx?-1:1,0);else setDir(0,y<cy?-1:1);}});
+retryBtn.onclick=init;init();requestAnimationFrame(render);
+
+</script>
+</body>
+</html>
